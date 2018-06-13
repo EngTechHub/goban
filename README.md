@@ -5,3 +5,8 @@ Goban是使用Go语言实现的围棋SGF解析器
 3. 支持评论等信息记录
 
 后面会结合正式业务不断优化
+
+> 使用方法
+`
+go get gitee.com/larry_dev/goban
+`
