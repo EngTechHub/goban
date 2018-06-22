@@ -8,15 +8,15 @@ import (
 )
 
 type Position struct {
-	Schema   []int32
-	Size     int32
+	Schema   []int
+	Size     int
 	BlackCap int
 	WhiteCap int
 	HisNode  Node
 }
 
 // 创建position对象
-func NewPosition(size int32) Position {
+func NewPosition(size int) Position {
 	position := Position{}
 	position.Size = size
 	position.Schema = position.CreateSchema()
@@ -24,7 +24,7 @@ func NewPosition(size int32) Position {
 }
 
 // position坐标规则x*size+y
-func (p Position) GetPos(x, y int32) int32 {
+func (p Position) GetPos(x, y int) int {
 	return x*p.Size + y
 }
 
@@ -39,20 +39,20 @@ func (p *Position) Clone() (*Position) {
 }
 
 //创建schema
-func (p Position) CreateSchema() []int32 {
-	poss := make([]int32, p.Size*p.Size)
+func (p Position) CreateSchema() []int {
+	poss := make([]int, p.Size*p.Size)
 	return poss
 }
 
 // 设置POSITION坐标对应颜色 Position规则为x*size+y
-func (p *Position) SetColor(x, y, c int32) {
+func (p *Position) SetColor(x, y, c int) {
 	if x >= 0 && y >= 0 && x <= p.Size-1 && y <= p.Size-1 {
 		p.Schema[p.GetPos(x, y)] = c
 	}
 }
 
 // 获取position坐标对应的颜色 Position规则为x*size+y
-func (p Position) GetColor(x, y int32) int32 {
+func (p Position) GetColor(x, y int) int {
 	if x >= 0 && y >= 0 {
 		return p.Schema[p.GetPos(x, y)]
 	}
@@ -60,16 +60,16 @@ func (p Position) GetColor(x, y int32) int32 {
 }
 
 // 遍历x,y
-func (p Position) ForeachXY(cb func(x, y int32)) {
-	for i := int32(0); i < p.Size; i++ {
-		for j := int32(0); j < p.Size; j++ {
+func (p Position) ForeachXY(cb func(x, y int)) {
+	for i := int(0); i < p.Size; i++ {
+		for j := int(0); j < p.Size; j++ {
 			cb(i, j)
 		}
 	}
 }
 
 //获取对应坐标的四领域,并回调触发
-func (p Position) Neighbor4(x, y int32, cb func(x, y int32)) {
+func (p Position) Neighbor4(x, y int, cb func(x, y int)) {
 	// up
 	if y > 0 {
 		cb(x, y-1)
@@ -96,9 +96,9 @@ func (p *Position) Cap(nodes []Node) {
 }
 
 // 根据坐标和颜色获取是否可提子
-func (p *Position) GetDeadByPointColor(x, y, c int32) []Node {
+func (p *Position) GetDeadByPointColor(x, y, c int) []Node {
 	nodes := make([]Node, 0)
-	p.Neighbor4(x, y, func(x, y int32) {
+	p.Neighbor4(x, y, func(x, y int) {
 		if p.GetColor(x, y) == c {
 			nodes = append(nodes, p.CalcDeadNode(x, y, c)...)
 		}
@@ -107,21 +107,21 @@ func (p *Position) GetDeadByPointColor(x, y, c int32) []Node {
 }
 
 //计算死子但不提子
-func (p *Position) CalcDeadNode(x, y, c int32) []Node {
+func (p *Position) CalcDeadNode(x, y, c int) []Node {
 	//新建一个计算的POSITION用于判断死子
 	calcPos := NewPosition(p.Size)
 	isDead := true
 	nodes := make([]Node, 0)
 	calcPos = p.FindAreaByC(calcPos, x, y, c)
 	//判断是否可提子
-	p.ForeachXY(func(x, y int32) {
+	p.ForeachXY(func(x, y int) {
 		if calcPos.GetColor(x, y) == 3 {
 			isDead = false
 		}
 	})
 	//如果可提子进入提子，但是不动原始数据
 	if isDead {
-		p.ForeachXY(func(i, j int32) {
+		p.ForeachXY(func(i, j int) {
 			if calcPos.GetColor(i, j) == c {
 				p.SetColor(i, j, Empty)
 				nodes = append(nodes, Node{
@@ -136,7 +136,7 @@ func (p *Position) CalcDeadNode(x, y, c int32) []Node {
 }
 
 // FindAreaByC 查找区域连块逻辑
-func (p Position) FindAreaByC(pos Position, x, y, c int32) Position {
+func (p Position) FindAreaByC(pos Position, x, y, c int) Position {
 	if pos.GetColor(x, y) != c && p.GetColor(x, y) == c {
 		pos.SetColor(x, y, c)
 		//上区域连块
@@ -172,7 +172,7 @@ func (p Position) FindAreaByC(pos Position, x, y, c int32) Position {
 }
 func (p Position) ShowBoard() string {
 	boards:=make([]string,p.Size)
-	p.ForeachXY(func(x, y int32) {
+	p.ForeachXY(func(x, y int) {
 		color:=p.GetColor(x,y)
 		str:="."
 		switch color {

@@ -10,8 +10,8 @@ func TestParseSgf(t *testing.T)  {
 	sgf:="(;SZ[19]KM[6.5]HA[1]AB[ab]AW[bb]C[123132]GM[1];B[ba])"
 	kifu:=ParseSgf(sgf)
 	kifu.Last()
- 	assert.Equal(t,kifu.Size,int32(19))
-	assert.Equal(t,kifu.Komi,float32(6.5))
+ 	assert.Equal(t,kifu.Size,19)
+	assert.Equal(t,kifu.Komi,6.5)
 	assert.Equal(t,kifu.Handicap,1)
 	assert.Equal(t,len(kifu.Root.Steup),2)
 	assert.Equal(t,kifu.NodeCount,1)

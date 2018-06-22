@@ -4,6 +4,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"fmt"
 )
 
 func setup(kifu *Kifu, node *Node, value []string, indent string) {
@@ -15,7 +16,7 @@ func setup(kifu *Kifu, node *Node, value []string, indent string) {
 	}
 	for _,v:=range value{
 		node.AddSetup(&Node{
-			C: int32(c),
+			C: c,
 			X: StrToASCII(v, 0),
 			Y: StrToASCII(v, 1),
 		})
@@ -29,11 +30,11 @@ func node(kifu *Kifu, node *Node, value []string, indent string) {
 		c = W
 	}
 	if len(value) == 0 || (kifu.Size <= 19 && value[0] == "tt") {
-		node.C = int32(c)
-		node.X = int32(-1)
-		node.Y = int32(-1)
+		node.C = c
+		node.X = -1
+		node.Y = -1
 	} else {
-		node.C = int32(c)
+		node.C = c
 		node.X = StrToASCII(value[0], 0)
 		node.Y = StrToASCII(value[0], 1)
 	}
@@ -45,14 +46,14 @@ func kifuInfo(kifu *Kifu, node *Node, value []string, indent string) {
 		if err != nil {
 			size = 19
 		}
-		kifu.Size = int32(size)
+		kifu.Size = size
 	}
 	if indent == "KM" {
 		km, err := strconv.ParseFloat(value[0], 32)
 		if err != nil {
 			km = 7.5
 		}
-		kifu.Komi = float32(km)
+		kifu.Komi = float64(km)
 	}
 	if indent == "HA" {
 		ha, err := strconv.Atoi(value[0])
@@ -88,6 +89,7 @@ func ParseSgf(sgf string) Kifu {
 	reg_indent := regexp.MustCompile(pat_ident)
 	reg_props := regexp.MustCompile(pat_props)
 	reg_re := regexp.MustCompile(`\\(!\\)`)
+	fmt.Println("开始解析")
 	sequence := reg_seq.FindAllString(sgf, -1)
 	for _, v := range sequence {
 		if v == "(" {
@@ -101,7 +103,7 @@ func ParseSgf(sgf string) Kifu {
 			}
 			continue
 		}
-		if (node == nil) {
+		if node == nil {
 			node = kifu.Root
 		} else {
 			node = node.AppendChild()

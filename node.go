@@ -1,9 +1,9 @@
 package goban
 
 type Node struct {
-	X          int32
-	Y          int32
-	C          int32
+	X          int
+	Y          int
+	C          int
 	Comment    string
 	Parent     *Node               `json:"-"`
 	Childrens  []*Node             `json:"-"`
@@ -24,13 +24,13 @@ func NewNode() *Node {
 
 //获取子节点
 func (n Node) GetChild(i int) *Node {
-	if len(n.Childrens)==0{
+	if len(n.Childrens) == 0 {
 		return nil
 	}
-	if len(n.Childrens) <=i {
-		i=0
+	if len(n.Childrens) <= i {
+		i = 0
 	}
-	n.LastSelect=i
+	n.LastSelect = i
 	return n.Childrens[n.LastSelect]
 }
 
@@ -45,4 +45,14 @@ func (n *Node) AppendChild() *Node {
 // 添加AB/AW标签
 func (n *Node) AddSetup(obj *Node) {
 	n.Steup = append(n.Steup, obj)
+}
+
+// 返回当前节点的颜色字符串
+func (n *Node) GetColor() string {
+	if n.C == B {
+		return "B"
+	} else if n.C == W {
+		return "W"
+	}
+	return ""
 }

@@ -7,10 +7,10 @@ import (
 
 type Kifu struct {
 	Root      *Node
-	Size      int32
+	Size      int
 	Handicap  int
-	Komi      float32
-	CurColor  int32
+	Komi      float64
+	CurColor  int
 	SgfStr    string
 	NodeCount int
 	CurPos    Position
@@ -37,7 +37,7 @@ func (k *Kifu) GoTo(step int) {
 	if step > k.NodeCount || step == -1 {
 		step = k.NodeCount
 	}
-	k.CurNode=k.Root
+	k.CurNode = k.Root
 	node := k.Root
 	for i := 0; i < step; i++ {
 		if len(node.Steup) > 0 {
@@ -47,7 +47,7 @@ func (k *Kifu) GoTo(step int) {
 		}
 
 		temp := node.GetChild(node.LastSelect)
-		if temp!=nil{
+		if temp != nil {
 			k.Move(temp.X, temp.Y, temp.C)
 			k.CurNode = temp
 			k.CurColor = -node.C
@@ -58,8 +58,9 @@ func (k *Kifu) GoTo(step int) {
 func (k *Kifu) Last() {
 	k.GoTo(-1)
 }
+
 // 落子算法逻辑
-func (k *Kifu) Move(x, y, c int32) bool {
+func (k *Kifu) Move(x, y, c int) bool {
 	if k.IsBoard(x, y) {
 		return false
 	}
@@ -75,12 +76,12 @@ func (k *Kifu) Move(x, y, c int32) bool {
 		}
 	}
 	if len(deads) == 1 {
-		if k.CheckKo(x,y,c) {
+		if k.CheckKo(x, y, c) {
 			return false
 		}
 		k.IsKo = true
 		k.liberty = deads[0]
-	}else{
+	} else {
 		k.IsKo = false
 	}
 	k.CurPos.SetColor(x, y, c)
@@ -88,7 +89,7 @@ func (k *Kifu) Move(x, y, c int32) bool {
 	k.CurPath++
 	return true
 }
-func (k *Kifu) Play(x, y, c int32) bool {
+func (k *Kifu) Play(x, y, c int) bool {
 	if k.Move(x, y, c) {
 		k.CurNode = k.CurNode.AppendChild()
 		k.CurNode.X = x
@@ -101,12 +102,12 @@ func (k *Kifu) Play(x, y, c int32) bool {
 	return false
 
 }
-func (k Kifu) IsBoard(x, y int32) bool {
+func (k Kifu) IsBoard(x, y int) bool {
 	return k.CurPos.GetColor(x, y) != Empty
 }
-func (k Kifu) CheckKo(x,y,c int32) bool {
+func (k Kifu) CheckKo(x, y, c int) bool {
 	if k.IsKo {
-		if k.liberty.X == x && k.liberty.Y == y && k.liberty.C == c{
+		if k.liberty.X == x && k.liberty.Y == y && k.liberty.C == c {
 			return true
 		}
 	}
@@ -171,7 +172,7 @@ func (k Kifu) SgfWriteNode(node *Node) string {
 	if len(node.Steup) > 0 {
 		sgf += k.toSetup(node.Steup)
 	}
-	sgf+=k.toNodeInfo(node)
+	sgf += k.toNodeInfo(node)
 	if len(node.Childrens) == 1 {
 		sgf += k.SgfWriteNode(node.Childrens[0])
 	} else if len(node.Childrens) > 1 {
@@ -193,7 +194,7 @@ func (k Kifu) SgfWriteVariantion(node *Node) string {
 // 根据当前节点生成SGF获取一条分支
 func (k Kifu) ToCurSgf() string {
 	sgf := fmt.Sprintf("(;SZ[%v]KM[%v]HA[%v]", k.Size, k.Komi, k.Handicap)
-	sgf+=k.toNodeInfo(k.Root)+k.RefletSgfWriteNode(k.CurNode)
+	sgf += k.toNodeInfo(k.Root) + k.RefletSgfWriteNode(k.CurNode)
 	sgf += ")"
 	return sgf
 }
@@ -216,4 +217,38 @@ func (k Kifu) RefletSgfWriteNode(node *Node) string {
 		sgf = k.RefletSgfWriteNode(node.Parent) + sgf
 	}
 	return sgf
+}
+
+// 返回所有SGF分支对应独立谱
+func (k Kifu) ToSgfList() []string {
+	sgf := fmt.Sprintf("(;SZ[%v]KM[%v]HA[%v]", k.Size, k.Komi, k.Handicap)
+	node := k.Root
+	sgfs := make([]string, 0)
+	sgfs = k.getBranch(node, sgf, sgfs)
+	return sgfs
+}
+
+// 正序解析节点
+func (k Kifu) getBranch(node *Node, sgf string, sgfs []string) []string {
+	if node.C != Empty {
+		if node.C == B {
+			sgf += fmt.Sprintf(";B[%s]", CoorToSgfNode(node.X, node.Y))
+		} else if node.C == W {
+			sgf += fmt.Sprintf(";W[%s]", CoorToSgfNode(node.X, node.Y))
+		}
+	}
+	if len(node.Steup) > 0 {
+		sgf += k.toSetup(node.Steup)
+	}
+	sgf += k.toNodeInfo(node)
+	if len(node.Childrens) == 1 {
+		sgfs = k.getBranch(node.Childrens[0], sgf, sgfs)
+	} else if len(node.Childrens) > 1 {
+		for _, v := range node.Childrens {
+			sgfs = k.getBranch(v, sgf, sgfs)
+		}
+	} else {
+		sgfs = append(sgfs, sgf+")")
+	}
+	return sgfs
 }

@@ -7,14 +7,14 @@ import (
 )
 
 // ToNum 根据字符串转为ASCII码
-func StrToASCII(value string, index int) int32 {
+func StrToASCII(value string, index int) int {
 	temp := string(value[index])
 	xr := []rune(temp)
-	return xr[0] - 97
+	return int(xr[0]) - 97
 }
 
 //坐标转为sgf中的坐标字符串
-func CoorToSgfNode(x, y int32) string {
+func CoorToSgfNode(x, y int) string {
 	xChar := fmt.Sprintf("%s", string(x+ACSII))
 	yChar := fmt.Sprintf("%s", string(y+ACSII))
 	if x == -1 {
@@ -28,7 +28,7 @@ func CoorToSgfNode(x, y int32) string {
 }
 
 //坐标转为棋盘中的坐标字符串
-func CoorToBoardNode(x, y, size int32) string {
+func CoorToBoardNode(x, y, size int) string {
 	if x >= 8 {
 		x++
 	}
