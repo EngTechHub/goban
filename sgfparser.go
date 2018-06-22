@@ -4,7 +4,6 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
-	"fmt"
 )
 
 func setup(kifu *Kifu, node *Node, value []string, indent string) {
@@ -89,7 +88,6 @@ func ParseSgf(sgf string) Kifu {
 	reg_indent := regexp.MustCompile(pat_ident)
 	reg_props := regexp.MustCompile(pat_props)
 	reg_re := regexp.MustCompile(`\\(!\\)`)
-	fmt.Println("开始解析")
 	sequence := reg_seq.FindAllString(sgf, -1)
 	for _, v := range sequence {
 		if v == "(" {
