@@ -16,3 +16,5 @@
 covprofile
 coverage.html
 
+.DS_Store
+example/leelasgf/*
