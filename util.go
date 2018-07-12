@@ -29,19 +29,46 @@ func CoorToSgfNode(x, y int) string {
 
 //坐标转为棋盘中的坐标字符串
 func CoorToBoardNode(x, y, size int) string {
+	if x == -1 && y == -1 {
+		return "pass"
+	}
 	if x >= 8 {
 		x++
 	}
 	return strings.ToUpper(fmt.Sprintf("%s%d", string(x+ACSII), size-y))
 }
 
+// 棋盘坐标转为X,Y坐标
+func StoneToXY(move string, size int) (int, int) {
+	move=strings.TrimSpace(move)
+	if move == "" {
+		return -1, -1
+	} else if "pass" == strings.ToLower(move) {
+		return -1, -1
+	}
+	temp := strings.ToLower(string(move[0]))
+	xr := []rune(temp)
+	xInt := xr[0]
+	if xInt > 105 {
+		xInt = xInt - 1
+	}
+	xInt = xInt - 97
+	y, err := strconv.Atoi(string(move[1:]))
+	//utils.CheckError(err)
+	if err != nil {
+		return -1, -1
+	}
+	yInt := size - y
+	return int(xInt), yInt
+}
+
 // 解析leelazero 数据
 func ParseBranch(log string) []map[string]interface{} {
 	lines := strings.Split(log, "\n")
-	result := make([]map[string]interface{},0)
+	result := make([]map[string]interface{}, 0)
 	for _, v := range lines {
 		if strings.Contains(v, "->") {
-			item:=make(map[string]interface{})
+			item := make(map[string]interface{})
 			first := strings.Split(v, "->")
 			//选点
 			item["select"] = strings.TrimSpace(first[0])
@@ -57,7 +84,7 @@ func ParseBranch(log string) []map[string]interface{} {
 			if len(four) > 0 && four[0] == "PV:" {
 				item["branch"] = four[1:]
 			}
-			result=append(result, item)
+			result = append(result, item)
 		}
 	}
 	return result

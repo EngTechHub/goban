@@ -50,7 +50,7 @@ func (k *Kifu) GoTo(step int) {
 		if temp != nil {
 			k.Move(temp.X, temp.Y, temp.C)
 			k.CurNode = temp
-			k.CurColor = -node.C
+			k.CurColor = -temp.C
 			node = temp
 		}
 	}

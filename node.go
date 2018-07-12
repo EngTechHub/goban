@@ -56,3 +56,11 @@ func (n *Node) GetColor() string {
 	}
 	return ""
 }
+
+// 返回当前节点的颜色字符串
+func (n *Node) IsPass() bool {
+	if n.X == -1 && n.Y == -1 {
+		return true
+	}
+	return false
+}

@@ -32,8 +32,7 @@ func (p Position) GetPos(x, y int) int {
 func (p *Position) Clone() (*Position) {
 	var buf bytes.Buffer
 	gob.NewEncoder(&buf).Encode(p);
-
-	pos:=&Position{}
+	pos := &Position{}
 	gob.NewDecoder(bytes.NewBuffer(buf.Bytes())).Decode(pos)
 	return pos
 }
@@ -170,18 +169,32 @@ func (p Position) FindAreaByC(pos Position, x, y, c int) Position {
 	}
 	return pos
 }
-func (p Position) ShowBoard() string {
-	boards:=make([]string,p.Size)
+func (p Position) ShowBoard(coors ...bool) string {
+	show := true
+	if len(coors) > 0 {
+		show = coors[0]
+	}
+	boards := make([]string, p.Size)
 	p.ForeachXY(func(x, y int) {
-		color:=p.GetColor(x,y)
-		str:="."
+		color := p.GetColor(x, y)
+		str := "."
 		switch color {
 		case B:
-			str="X"
+			str = "X"
 		case W:
-			str="O"
+			str = "O"
 		}
-		boards[y]=fmt.Sprintf("%s%+3v",boards[y],str)
+		boards[y] = fmt.Sprintf("%s%+3v", boards[y], str)
 	})
-	return strings.Join(boards,"\n")
+	xCoor := ""
+	if show {
+		for i := 0; i < p.Size; i++ {
+			temp := CoorToBoardNode(i, i, p.Size)
+			xCoor += fmt.Sprintf("%+3v", string(temp[0]))
+			boards[i] = fmt.Sprintf("%+3v%s", temp[1:], boards[i])
+		}
+		xCoor = fmt.Sprintf("%+3v", " ") + xCoor + "\n"
+	}
+
+	return xCoor + strings.Join(boards, "\n")
 }
