@@ -95,9 +95,11 @@ func ParseSgf(sgf string) Kifu {
 			continue
 		} else if v == ")" {
 			ll := len(stack)
-			node = stack[ll-1]
-			if ll > 1 {
-				stack = stack[:ll-1]
+			if ll>0{
+				node = stack[ll-1]
+				if ll > 1 {
+					stack = stack[:ll-1]
+				}
 			}
 			continue
 		}
