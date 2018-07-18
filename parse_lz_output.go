@@ -3,7 +3,6 @@ package goban
 import (
 	"strings"
 	"strconv"
-	"fmt"
 )
 
 // 解析leelazero 数据
@@ -48,12 +47,12 @@ func ParseLZOutput(output string,size int) []*AIOutput {
 			//变化图
 			four := strings.Fields(strings.TrimSpace(three[1]))
 			if len(four) > 0 && four[0] == "PV:" {
-				disgram:=make([]string,0)
+				diagram:=make([]string,0)
 				for _,v:=range four[1:]{
 					x,y:=StoneToXY(v,size)
-					disgram=append(disgram, CoorToSgfNode(x,y))
+					diagram=append(diagram, CoorToSgfNode(x,y))
 				}
-				item.Diagram = disgram
+				item.Diagram = diagram
 			}
 			result = append(result, item)
 		}
