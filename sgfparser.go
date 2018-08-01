@@ -126,5 +126,7 @@ func ParseSgf(sgf string) Kifu {
 		}
 
 	}
+	kifu.CurNode=kifu.Root
+	kifu.CurPos=NewPosition(kifu.Size)
 	return kifu
 }

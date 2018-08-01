@@ -61,9 +61,9 @@ NN eval=0.468024
 2 non leaf nodes, 1.00 average children
 3 visits, 1083 nodes, 2 playouts, 13 n/s
 `
-	result := ParseBranch(log)
+	result := ParseLZOutput(log,kifu.Size)
 	assert.Equal(t, len(result), 2)
-	assert.Equal(t, result[0]["times"], "2")
+	assert.Equal(t, result[0].Times, 2)
 	log = `  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
@@ -86,7 +86,7 @@ NN eval=0.468024
 pass: 0
 winrate: 1.000000
 `
-	heatMap, wineRate := ParseHeatMap(log)
+	heatMap, wineRate := ParseLZHeatMap(log)
 	assert.Equal(t, len(heatMap), 362)
 	assert.Equal(t, heatMap[283], 999.0)
 	assert.Equal(t, wineRate, 1.0)
