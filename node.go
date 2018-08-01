@@ -41,6 +41,14 @@ func (n *Node) AppendChild() *Node {
 	n.Childrens = append(n.Childrens, node)
 	return node
 }
+func (n *Node) RemoveChild() *Node {
+	parent := n.Parent
+	if parent!=nil{
+		i := parent.LastSelect
+		parent.Childrens = append(parent.Childrens[:i], parent.Childrens[i+1:]...)
+	}
+	return parent
+}
 
 // 添加AB/AW标签
 func (n *Node) AddSetup(obj *Node) {

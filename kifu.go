@@ -89,6 +89,9 @@ func (k *Kifu) Move(x, y, c int) bool {
 	k.CurPath++
 	return true
 }
+func (k *Kifu) Remove() {
+	k.CurNode=k.CurNode.RemoveChild()
+}
 func (k *Kifu) Play(x, y, c int) bool {
 	if k.Move(x, y, c) {
 		k.CurNode = k.CurNode.AppendChild()
