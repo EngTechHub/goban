@@ -91,6 +91,7 @@ func (k *Kifu) Move(x, y, c int) bool {
 }
 func (k *Kifu) Remove() {
 	k.CurNode=k.CurNode.RemoveChild()
+	k.Last()
 }
 func (k *Kifu) Play(x, y, c int) bool {
 	if k.Move(x, y, c) {
