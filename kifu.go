@@ -126,7 +126,25 @@ func (k Kifu) ToSgf() string {
 	sgf += ")"
 	return sgf
 }
-
+func (k Kifu) ToCleanSgf() string {
+	sgf := fmt.Sprintf("(;SZ[%v]", k.Size)
+	node := k.Root
+	for len(node.Childrens)>1 {
+		if node.C != Empty {
+			if node.C == B {
+				sgf += fmt.Sprintf(";B[%s]", CoorToSgfNode(node.X, node.Y))
+			} else if node.C == W {
+				sgf += fmt.Sprintf(";W[%s]", CoorToSgfNode(node.X, node.Y))
+			}
+		}
+		if len(node.Steup) > 0 {
+			sgf += k.toSetup(node.Steup)
+		}
+		node=node.GetChild(0)
+	}
+	sgf += ")"
+	return sgf
+}
 // 解析节点信息
 func (k Kifu) toNodeInfo(node *Node) string {
 	sgf := ""

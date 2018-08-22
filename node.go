@@ -72,3 +72,7 @@ func (n *Node) IsPass() bool {
 	}
 	return false
 }
+
+func (n *Node) AddInfo(key,value string) {
+	n.Info[key]=[]string{value}
+}

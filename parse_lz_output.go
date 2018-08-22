@@ -6,9 +6,10 @@ import (
 )
 
 // 解析leelazero 数据
-func ParseLZOutput(output string,size int) []*AIOutput {
+func ParseLZOutput(output string,size int,move string) ([]*AIOutput,float64) {
 	result := make([]*AIOutput, 0)
 	lines := strings.Split(output, "\n")
+	rate:=0.0
 	//result := make([]map[string]interface{}, 0)
 	for _, v := range lines {
 		if strings.Contains(v, "->") {
@@ -35,6 +36,9 @@ func ParseLZOutput(output string,size int) []*AIOutput {
 			} else {
 				item.WineRate = wineRate
 			}
+			if item.Select==move{
+				rate=item.WineRate
+			}
 			three := strings.Split(strings.Replace(second[2], "N:", "", -1), "%)")
 			// 策略网络概率
 			chanceS := strings.TrimSpace(three[0])
@@ -57,7 +61,7 @@ func ParseLZOutput(output string,size int) []*AIOutput {
 			result = append(result, item)
 		}
 	}
-	return result
+	return result,rate
 }
 
 //解析leelazero heatmap

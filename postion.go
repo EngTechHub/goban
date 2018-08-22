@@ -25,7 +25,7 @@ func NewPosition(size int) Position {
 
 // position坐标规则x*size+y
 func (p Position) GetPos(x, y int) int {
-	return x*p.Size + y
+	return x + y*p.Size
 }
 
 // 克隆POSITION对象
