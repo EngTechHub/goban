@@ -6,13 +6,17 @@ import (
 )
 
 // 解析leelazero 数据
-func ParseLZOutput(output string,size int,move string) ([]*AIOutput,float64) {
+func ParseLZOutput(output string,size int,move string,limits ...int) ([]*AIOutput,float64) {
+	lim:=10
+	if len(limits)>0{
+		lim=limits[0]
+	}
 	result := make([]*AIOutput, 0)
 	lines := strings.Split(output, "\n")
 	rate:=0.0
-	//result := make([]map[string]interface{}, 0)
 	for _, v := range lines {
 		if strings.Contains(v, "->") {
+
 			item := &AIOutput{} //make(map[string]interface{})
 			first := strings.Split(v, "->")
 			//选点
@@ -52,7 +56,10 @@ func ParseLZOutput(output string,size int,move string) ([]*AIOutput,float64) {
 			four := strings.Fields(strings.TrimSpace(three[1]))
 			if len(four) > 0 && four[0] == "PV:" {
 				diagram:=make([]string,0)
-				for _,v:=range four[1:]{
+				for j,v:=range four[1:]{
+					if j>=lim{
+						break
+					}
 					x,y:=StoneToXY(v,size)
 					diagram=append(diagram, CoorToSgfNode(x,y))
 				}

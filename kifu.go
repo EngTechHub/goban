@@ -90,7 +90,7 @@ func (k *Kifu) Move(x, y, c int) bool {
 	return true
 }
 func (k *Kifu) Remove() {
-	k.CurNode=k.CurNode.RemoveChild()
+	k.CurNode = k.CurNode.RemoveChild()
 	k.Last()
 }
 func (k *Kifu) Play(x, y, c int) bool {
@@ -129,7 +129,7 @@ func (k Kifu) ToSgf() string {
 func (k Kifu) ToCleanSgf() string {
 	sgf := fmt.Sprintf("(;SZ[%v]", k.Size)
 	node := k.Root
-	for len(node.Childrens)>1 {
+	for len(node.Childrens) > 1 {
 		if node.C != Empty {
 			if node.C == B {
 				sgf += fmt.Sprintf(";B[%s]", CoorToSgfNode(node.X, node.Y))
@@ -140,11 +140,12 @@ func (k Kifu) ToCleanSgf() string {
 		if len(node.Steup) > 0 {
 			sgf += k.toSetup(node.Steup)
 		}
-		node=node.GetChild(0)
+		node = node.GetChild(0)
 	}
 	sgf += ")"
 	return sgf
 }
+
 // 解析节点信息
 func (k Kifu) toNodeInfo(node *Node) string {
 	sgf := ""
@@ -217,6 +218,14 @@ func (k Kifu) SgfWriteVariantion(node *Node) string {
 func (k Kifu) ToCurSgf() string {
 	sgf := fmt.Sprintf("(;SZ[%v]KM[%v]HA[%v]", k.Size, k.Komi, k.Handicap)
 	sgf += k.toNodeInfo(k.Root) + k.RefletSgfWriteNode(k.CurNode)
+	sgf += ")"
+	return sgf
+}
+
+// 根据当前节点倒序生成SGF
+func (k Kifu) ToSgfByNode(node *Node) string {
+	sgf := fmt.Sprintf("(;SZ[%v]KM[%v]HA[%v]", k.Size, k.Komi, k.Handicap)
+	sgf += k.toNodeInfo(k.Root) + k.RefletSgfWriteNode(node)
 	sgf += ")"
 	return sgf
 }
