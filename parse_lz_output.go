@@ -6,7 +6,7 @@ import (
 )
 
 // 解析leelazero 数据
-func ParseLZOutput(output string,size int,move string,limits ...int) ([]*AIOutput,float64) {
+func ParseLZOutput(output string,size int,limits ...int) ([]*AIOutput,float64) {
 	lim:=10
 	if len(limits)>0{
 		lim=limits[0]
@@ -14,6 +14,7 @@ func ParseLZOutput(output string,size int,move string,limits ...int) ([]*AIOutpu
 	result := make([]*AIOutput, 0)
 	lines := strings.Split(output, "\n")
 	rate:=0.0
+	isFirst:=true
 	for _, v := range lines {
 		if strings.Contains(v, "->") {
 
@@ -40,8 +41,9 @@ func ParseLZOutput(output string,size int,move string,limits ...int) ([]*AIOutpu
 			} else {
 				item.WineRate = wineRate
 			}
-			if item.Select==move{
+			if isFirst{
 				rate=item.WineRate
+				isFirst=false
 			}
 			three := strings.Split(strings.Replace(second[2], "N:", "", -1), "%)")
 			// 策略网络概率
