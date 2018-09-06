@@ -198,3 +198,17 @@ func (p Position) ShowBoard(coors ...bool) string {
 
 	return xCoor + strings.Join(boards, "\n")
 }
+// GetStones 获取各个颜色的棋子列表
+func (p Position) GetStones() (blackList []string, whiteList []string) {
+	blackList = make([]string, 0)
+	whiteList = make([]string, 0)
+	p.ForeachXY(func(x, y int) {
+		coon := CoorToSgfNode(x,y)
+		if p.GetColor(x,y)==B{
+			blackList = append(blackList, coon)
+		}else if p.GetColor(x,y)==W{
+			whiteList = append(whiteList, coon)
+		}
+	})
+	return
+}

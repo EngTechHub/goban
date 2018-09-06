@@ -8,6 +8,11 @@ import (
 
 // ToNum 根据字符串转为ASCII码
 func StrToASCII(value string, index int) int {
+	if value == "" {
+		return -1
+	}else if value=="tt"{
+		return -1
+	}
 	temp := string(value[index])
 	xr := []rune(temp)
 	return int(xr[0]) - 97
