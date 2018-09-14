@@ -1,5 +1,7 @@
 package goban
 
+import "fmt"
+
 type Node struct {
 	X          int
 	Y          int
@@ -73,6 +75,11 @@ func (n *Node) IsPass() bool {
 	return false
 }
 
-func (n *Node) AddInfo(key,value string) {
-	n.Info[key]=[]string{value}
+func (n *Node) AddInfo(key string,value interface{}) {
+	str:=fmt.Sprintf("%v",value)
+	switch value.(type) {
+	case float64,float32:
+		str=fmt.Sprintf("%.1f",value)
+	}
+	n.Info[key]=[]string{str}
 }

@@ -230,6 +230,17 @@ func (k Kifu) ToSgfByNode(node *Node) string {
 	return sgf
 }
 
+//遍历节点
+func (k *Kifu) EachNode(f func(n *Node, move int)) {
+	node := k.Root
+	count := 0
+	for len(node.Childrens) > 0 {
+		node = node.GetChild(0)
+		count++
+		f(node, count)
+	}
+}
+
 // 方向解析节点
 func (k Kifu) RefletSgfWriteNode(node *Node) string {
 	sgf := ""

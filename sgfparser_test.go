@@ -7,8 +7,11 @@ import (
 
 func TestParseSgf(t *testing.T) {
 	//正常解析测试
+
 	sgf := "(;SZ[19]KM[6.5]HA[1]AB[ab]AW[bb]C[123132]GM[1];B[ba])"
 	kifu := ParseSgf(sgf)
+	sgf = "(;;B[ba])"
+	kifu = ParseSgf(sgf)
 	kifu.Last()
 	assert.Equal(t, kifu.Size, 19)
 	assert.Equal(t, kifu.Komi, 6.5)
@@ -61,7 +64,7 @@ NN eval=0.468024
 2 non leaf nodes, 1.00 average children
 3 visits, 1083 nodes, 2 playouts, 13 n/s
 `
-	result := ParseLZOutput(log,kifu.Size)
+	result,_:= ParseLZOutput(log,kifu.Size)
 	assert.Equal(t, len(result), 2)
 	assert.Equal(t, result[0].Times, 2)
 	log = `  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
@@ -86,7 +89,7 @@ NN eval=0.468024
 pass: 0
 winrate: 1.000000
 `
-	heatMap, wineRate := ParseLZHeatMap(log)
+	heatMap, wineRate,_ := ParseLZHeatMap(log)
 	assert.Equal(t, len(heatMap), 362)
 	assert.Equal(t, heatMap[283], 999.0)
 	assert.Equal(t, wineRate, 1.0)
