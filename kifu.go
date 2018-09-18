@@ -129,7 +129,7 @@ func (k Kifu) ToSgf() string {
 func (k Kifu) ToCleanSgf() string {
 	sgf := fmt.Sprintf("(;SZ[%v]", k.Size)
 	node := k.Root
-	for len(node.Childrens) > 1 {
+	for len(node.Childrens) > 0 {
 		if node.C != Empty {
 			if node.C == B {
 				sgf += fmt.Sprintf(";B[%s]", CoorToSgfNode(node.X, node.Y))
