@@ -217,7 +217,7 @@ func (k Kifu) SgfWriteVariantion(node *Node) string {
 // 根据当前节点生成SGF获取一条分支
 func (k Kifu) ToCurSgf() string {
 	sgf := fmt.Sprintf("(;SZ[%v]KM[%v]HA[%v]", k.Size, k.Komi, k.Handicap)
-	sgf += k.toNodeInfo(k.Root) + k.RefletSgfWriteNode(k.CurNode)
+	sgf += k.RefletSgfWriteNode(k.CurNode)
 	sgf += ")"
 	return sgf
 }

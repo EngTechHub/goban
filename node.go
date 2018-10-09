@@ -83,3 +83,12 @@ func (n *Node) AddInfo(key string,value interface{}) {
 	}
 	n.Info[key]=[]string{str}
 }
+func (n *Node) GetInfo(key string) string{
+	v,has:=n.Info[key]
+	if has{
+		if len(v)>0{
+			return v[0]
+		}
+	}
+	return ""
+}
