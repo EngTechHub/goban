@@ -129,7 +129,7 @@ func (k Kifu) ToSgf() string {
 func (k Kifu) ToCleanSgf() string {
 	sgf := fmt.Sprintf("(;SZ[%v]", k.Size)
 	node := k.Root
-	for len(node.Childrens) > 0 {
+	for {
 		if node.C != Empty {
 			if node.C == B {
 				sgf += fmt.Sprintf(";B[%s]", CoorToSgfNode(node.X, node.Y))
@@ -140,7 +140,11 @@ func (k Kifu) ToCleanSgf() string {
 		if len(node.Steup) > 0 {
 			sgf += k.toSetup(node.Steup)
 		}
-		node = node.GetChild(0)
+		if len(node.Childrens) > 0 {
+			node = node.GetChild(0)
+		} else {
+			break
+		}
 	}
 	sgf += ")"
 	return sgf
@@ -234,10 +238,14 @@ func (k Kifu) ToSgfByNode(node *Node) string {
 func (k *Kifu) EachNode(f func(n *Node, move int)) {
 	node := k.Root
 	count := 0
-	for len(node.Childrens) > 0 {
-		node = node.GetChild(0)
-		count++
-		f(node, count)
+	for  {
+		f(node,count)
+		if len(node.Childrens)>0{
+			node=node.GetChild(0)
+			count++
+		}else{
+			break
+		}
 	}
 }
 

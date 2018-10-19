@@ -1,8 +1,8 @@
 package goban
 
 import (
-	"testing"
 	"github.com/magiconair/properties/assert"
+	"testing"
 )
 
 func TestParseSgf(t *testing.T) {
@@ -10,8 +10,6 @@ func TestParseSgf(t *testing.T) {
 
 	sgf := "(;SZ[19]KM[6.5]HA[1]AB[ab]AW[bb]C[123132]GM[1];B[ba])"
 	kifu := ParseSgf(sgf)
-	sgf = "(;;B[ba])"
-	kifu = ParseSgf(sgf)
 	kifu.Last()
 	assert.Equal(t, kifu.Size, 19)
 	assert.Equal(t, kifu.Komi, 6.5)
@@ -20,6 +18,8 @@ func TestParseSgf(t *testing.T) {
 	assert.Equal(t, kifu.NodeCount, 1)
 	assert.Equal(t, kifu.Play(0, 0, -1), false)
 	assert.Equal(t, kifu.ToSgf(), "(;SZ[19]KM[6.5]HA[1]AB[ab]AW[bb]C[123132]GM[1];B[ba])")
+	assert.Equal(t, kifu.CurColor, W)
+
 	sgf = "(;SZ[19]AB[ii]AW[jj];B[aa];W[ab];B[ac];W[ba];B[bb];W[ca];B[aa])"
 	kifu = ParseSgf(sgf)
 	kifu.Last()
@@ -64,9 +64,13 @@ NN eval=0.468024
 2 non leaf nodes, 1.00 average children
 3 visits, 1083 nodes, 2 playouts, 13 n/s
 `
-	result,_:= ParseLZOutput(log,kifu.Size)
+	result, wr := ParseLZOutput(log, kifu.Size)
 	assert.Equal(t, len(result), 2)
+	assert.Equal(t,wr,50.69)
 	assert.Equal(t, result[0].Times, 2)
+	result, _ = ParseLZOutput(log, kifu.Size,1)
+	assert.Equal(t, len(result[0].Diagram),1)
+
 	log = `  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
@@ -89,10 +93,11 @@ NN eval=0.468024
 pass: 0
 winrate: 1.000000
 `
-	heatMap, wineRate,_ := ParseLZHeatMap(log)
-	assert.Equal(t, len(heatMap), 362)
-	assert.Equal(t, heatMap[283], 999.0)
-	assert.Equal(t, wineRate, 1.0)
+	heatMap, pass, wr := ParseLZHeatMap(log)
+	assert.Equal(t, pass, 0.0)
+	assert.Equal(t, len(heatMap), 361)
+	assert.Equal(t, heatMap[337], 999.0)
+	assert.Equal(t, wr, 1.0)
 	x, y := StoneToXY("J19", 19)
 	assert.Equal(t, x, 8)
 	assert.Equal(t, y, 0)
@@ -107,8 +112,31 @@ winrate: 1.000000
 	assert.Equal(t, y, -1)
 	x, y = StoneToXY("D16", 19)
 
-	sgf = "(;GM[1]FF[4]CA[UTF-8]SO[弈客围棋]RU[zh]KM[7.5]HA[0]SZ[19];B[pp];W[dq];B[dd];W[qd])"
+	sgf = "(;SZ[19]KM[7.5]HA[0]AB[aa];B[pd];W[cc])"
 	kifu = ParseSgf(sgf)
+	assert.Equal(t, kifu.NodeCount, 2)
+	assert.Equal(t,kifu.ToCleanSgf(),"(;SZ[19]AB[aa];B[pd];W[cc])")
 	kifu.Last()
-	assert.Equal(t, kifu.CurColor, B)
+	assert.Equal(t,kifu.ToCurSgf(),"(;SZ[19]KM[7.5]HA[0]AB[aa];B[pd];W[cc])")
+	assert.Equal(t,kifu.ToSgfByNode(kifu.CurNode),"(;SZ[19]KM[7.5]HA[0]AB[aa];B[pd];W[cc])")
+	tv:=0
+	kifu.EachNode(func(n *Node, move int) {
+		tv++
+	})
+	assert.Equal(t,tv,kifu.NodeCount+1)
+	kifu.GoTo(2)
+	kifu.Remove()
+	assert.Equal(t,kifu.ToSgfByNode(kifu.CurNode),"(;SZ[19]KM[7.5]HA[0]AB[aa];B[pd])")
+
+	sgf="(;SZ[19];B[tt];W[aa])"
+	kifu=ParseSgf(sgf)
+	kifu.GoTo(1)
+	assert.Equal(t,kifu.CurNode.IsPass(),true)
+	kifu.Last()
+	assert.Equal(t,kifu.CurNode.IsPass(),false)
+	kifu.CurNode.AddInfo("C","this is comment")
+	kifu.CurNode.AddInfo("WR",9.111)
+	assert.Equal(t,kifu.CurNode.GetInfo("C"),"this is comment")
+	assert.Equal(t,kifu.CurNode.GetInfo("WR"),"9.1")
+	assert.Equal(t,kifu.CurNode.GetInfo("BR"),"")
 }

@@ -1,10 +1,10 @@
 package goban
 
 import (
-	"strings"
-	"fmt"
 	"bytes"
 	"encoding/gob"
+	"fmt"
+	"strings"
 )
 
 type Position struct {
@@ -13,6 +13,7 @@ type Position struct {
 	BlackCap int
 	WhiteCap int
 	HisNode  Node
+	revert   bool
 }
 
 // 创建position对象
@@ -22,9 +23,16 @@ func NewPosition(size int) Position {
 	position.Schema = position.CreateSchema()
 	return position
 }
+//设置XY的计算公式
+func (p *Position) SetRevert(xy bool) {
+	p.revert = xy
+}
 
 // position坐标规则x*size+y
 func (p Position) GetPos(x, y int) int {
+	if p.revert {
+		return x*p.Size + y
+	}
 	return x + y*p.Size
 }
 
@@ -198,15 +206,16 @@ func (p Position) ShowBoard(coors ...bool) string {
 
 	return xCoor + strings.Join(boards, "\n")
 }
+
 // GetStones 获取各个颜色的棋子列表
 func (p Position) GetStones() (blackList []string, whiteList []string) {
 	blackList = make([]string, 0)
 	whiteList = make([]string, 0)
 	p.ForeachXY(func(x, y int) {
-		coon := CoorToSgfNode(x,y)
-		if p.GetColor(x,y)==B{
+		coon := CoorToSgfNode(x, y)
+		if p.GetColor(x, y) == B {
 			blackList = append(blackList, coon)
-		}else if p.GetColor(x,y)==W{
+		} else if p.GetColor(x, y) == W {
 			whiteList = append(whiteList, coon)
 		}
 	})
