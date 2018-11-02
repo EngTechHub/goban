@@ -235,15 +235,17 @@ func (k Kifu) ToSgfByNode(node *Node) string {
 }
 
 //遍历节点
-func (k *Kifu) EachNode(f func(n *Node, move int)) {
+func (k *Kifu) EachNode(f func(n *Node, move int) bool) {
 	node := k.Root
 	count := 0
-	for  {
-		f(node,count)
-		if len(node.Childrens)>0{
-			node=node.GetChild(0)
+	for {
+		if f(node, count) {
+			break
+		}
+		if len(node.Childrens) > 0 {
+			node = node.GetChild(0)
 			count++
-		}else{
+		} else {
 			break
 		}
 	}

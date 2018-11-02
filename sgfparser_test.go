@@ -2,6 +2,7 @@ package goban
 
 import (
 	"github.com/magiconair/properties/assert"
+	"strings"
 	"testing"
 )
 
@@ -120,10 +121,17 @@ winrate: 1.000000
 	assert.Equal(t,kifu.ToCurSgf(),"(;SZ[19]KM[7.5]HA[0]AB[aa];B[pd];W[cc])")
 	assert.Equal(t,kifu.ToSgfByNode(kifu.CurNode),"(;SZ[19]KM[7.5]HA[0]AB[aa];B[pd];W[cc])")
 	tv:=0
-	kifu.EachNode(func(n *Node, move int) {
+	kifu.EachNode(func(n *Node, move int)bool {
 		tv++
+		return false
 	})
 	assert.Equal(t,tv,kifu.NodeCount+1)
+	tv=0
+	kifu.EachNode(func(n *Node, move int)bool {
+		tv++
+		return true
+	})
+	assert.Equal(t,tv,1)
 	kifu.GoTo(2)
 	kifu.Remove()
 	assert.Equal(t,kifu.ToSgfByNode(kifu.CurNode),"(;SZ[19]KM[7.5]HA[0]AB[aa];B[pd])")
@@ -139,4 +147,58 @@ winrate: 1.000000
 	assert.Equal(t,kifu.CurNode.GetInfo("C"),"this is comment")
 	assert.Equal(t,kifu.CurNode.GetInfo("WR"),"9.1")
 	assert.Equal(t,kifu.CurNode.GetInfo("BR"),"")
+	assert.Equal(t,kifu.CurPos.GetColor(0,0),-1)
+
+	sgf="(;SZ[19];B[])"
+	kifu=ParseSgf(sgf)
+	kifu.Last()
+	assert.Equal(t,kifu.CurNode.X,-1)
+
+	position:=NewPosition(19)
+	position.SetRevert(true)
+	position.SetColor(1,1,1)
+	position.SetColor(2,2,-1)
+	assert.Equal(t,position.GetColor(1,1),1)
+	assert.Equal(t,position.ShowBoard(false),`  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+  .  X  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+  .  .  O  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .`)
+	assert.Equal(t,position.ShowBoard(true),`     A  B  C  D  E  F  G  H  J  K  L  M  N  O  P  Q  R  S  T
+ 19  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+ 18  .  X  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+ 17  .  .  O  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+ 16  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+ 15  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+ 14  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+ 13  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+ 12  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+ 11  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+ 10  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+  9  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+  8  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+  7  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+  6  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+  5  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+  4  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+  3  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+  2  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+  1  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .`)
+	black,white:=position.GetStones()
+	assert.Equal(t,strings.Join(black,""),"bb")
+	assert.Equal(t,strings.Join(white,""),"cc")
 }

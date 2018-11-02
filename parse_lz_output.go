@@ -27,20 +27,12 @@ func ParseLZOutput(output string, size int, limits ...int) ([]*AIOutput, float64
 
 			// 模拟次数
 			times := strings.TrimSpace(second[0])
-			t, err := strconv.Atoi(times)
-			if err != nil {
-				item.Times = 0
-			} else {
-				item.Times = t
-			}
+			t, _ := strconv.Atoi(times)
+			item.Times = t
 			// 胜率
 			wineRateS := strings.TrimSpace(strings.Replace(strings.Replace(second[1], "V:", "", -1), "%)", "", -1))
-			wineRate, err := strconv.ParseFloat(wineRateS, 64)
-			if err != nil {
-				item.WineRate = 0
-			} else {
-				item.WineRate = wineRate
-			}
+			wineRate, _ := strconv.ParseFloat(wineRateS, 64)
+			item.WineRate = wineRate
 			if isFirst {
 				rate = item.WineRate
 				isFirst = false
@@ -48,12 +40,8 @@ func ParseLZOutput(output string, size int, limits ...int) ([]*AIOutput, float64
 			three := strings.Split(strings.Replace(second[2], "N:", "", -1), "%)")
 			// 策略网络概率
 			chanceS := strings.TrimSpace(three[0])
-			chance, err := strconv.ParseFloat(chanceS, 64)
-			if err != nil {
-				item.Chance = 0
-			} else {
-				item.Chance = chance
-			}
+			chance, _ := strconv.ParseFloat(chanceS, 64)
+			item.Chance = chance
 			//变化图
 			four := strings.Fields(strings.TrimSpace(three[1]))
 			if len(four) > 0 && four[0] == "PV:" {
@@ -83,24 +71,15 @@ func ParseLZHeatMap(heatmap string) ([]float64, float64, float64) {
 		switch len(lines) {
 		case 19:
 			for x, p := range lines {
-				pp, err := strconv.ParseFloat(p, 64)
-				if err != nil{
-					pp=0.0
-				}
+				pp, _ := strconv.ParseFloat(p, 64)
 				position[x+y*19] = pp
 			}
 		case 2:
 			if lines[0] == "pass:" {
-				pp, err := strconv.ParseFloat(lines[1], 64)
-				if err != nil {
-					pp=0.0
-				}
+				pp, _ := strconv.ParseFloat(lines[1], 64)
 				pass = pp
 			} else if lines[0] == "winrate:" {
-				rate, err := strconv.ParseFloat(lines[1], 64)
-				if err != nil {
-					rate = 0
-				}
+				rate, _ := strconv.ParseFloat(lines[1], 64)
 				wineRate = rate
 			}
 		}
