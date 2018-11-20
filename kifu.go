@@ -331,3 +331,7 @@ func (k Kifu) getBranch(node *Node, sgf string, sgfs []string) []string {
 	}
 	return sgfs
 }
+
+func (k Kifu) GetLiberty() Node {
+	return k.liberty
+}
