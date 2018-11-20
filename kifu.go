@@ -1,6 +1,7 @@
 package goban
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 )
@@ -57,6 +58,31 @@ func (k *Kifu) GoTo(step int) {
 }
 func (k *Kifu) Last() {
 	k.GoTo(-1)
+}
+
+//LastAndCheck 进入最后一手并校验是否为合法棋谱
+func (k *Kifu) LastAndCheck() error {
+	k.CurPos = NewPosition(k.Size)
+	node := k.Root
+	for {
+		if len(node.Steup) > 0 {
+			for _, v := range node.Steup {
+				k.CurPos.SetColor(v.X, v.Y, v.C)
+			}
+		}
+		temp := node.GetChild(node.LastSelect)
+		if node != nil {
+			if k.Move(temp.X, temp.C, temp.C) {
+				k.CurNode = temp
+				k.CurColor = -temp.C
+				node = temp
+			} else {
+				return errors.New("sgf is error,please check sgf")
+			}
+		} else {
+			break
+		}
+	}
 }
 
 // 落子算法逻辑
