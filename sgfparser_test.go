@@ -202,3 +202,14 @@ winrate: 1.000000
 	assert.Equal(t,strings.Join(black,""),"bb")
 	assert.Equal(t,strings.Join(white,""),"cc")
 }
+
+func TestLastCheck(t *testing.T)  {
+	sgf:="(;SZ[19];B[aa];W[dd])"
+	kifu:=ParseSgf(sgf)
+	assert.Equal(t,kifu.LastAndCheck(),nil)
+	assert.Equal(t,kifu.CurColor,1)
+	sgf="(;SZ[19]AP[WGo.js:2]FF[4]GM[1]CA[UTF-8];B[ab];W[db];B[ba];W[aa])"
+	kifu=ParseSgf(sgf)
+	assert.Equal(t,kifu.LastAndCheck()!=nil,true)
+	assert.Equal(t,kifu.CurColor,-1)
+}

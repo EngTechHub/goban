@@ -71,8 +71,8 @@ func (k *Kifu) LastAndCheck() error {
 			}
 		}
 		temp := node.GetChild(node.LastSelect)
-		if node != nil {
-			if k.Move(temp.X, temp.C, temp.C) {
+		if temp != nil {
+			if k.Move(temp.X, temp.Y, temp.C) {
 				k.CurNode = temp
 				k.CurColor = -temp.C
 				node = temp
@@ -83,6 +83,7 @@ func (k *Kifu) LastAndCheck() error {
 			break
 		}
 	}
+	return nil
 }
 
 // 落子算法逻辑
