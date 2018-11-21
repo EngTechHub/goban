@@ -1,6 +1,7 @@
 package goban
 
 import (
+	"fmt"
 	"github.com/magiconair/properties/assert"
 	"strings"
 	"testing"
@@ -212,4 +213,12 @@ func TestLastCheck(t *testing.T)  {
 	kifu=ParseSgf(sgf)
 	assert.Equal(t,kifu.LastAndCheck()!=nil,true)
 	assert.Equal(t,kifu.CurColor,-1)
+}
+func TestCapGame(t *testing.T)  {
+	sgf:="(;SZ[19]AP[WGo.js:2]FF[4]GM[1]CA[UTF-8];B[ba];W[aa])"
+	kifu:=ParseSgf(sgf)
+	kifu.Last()
+	println(kifu.CurPos.ShowBoard())
+	n,i:=kifu.CurPos.CalcCap(kifu.CurColor,kifu.GetLiberty())
+	fmt.Println(n,i)
 }

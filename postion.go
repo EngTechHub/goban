@@ -23,6 +23,7 @@ func NewPosition(size int) Position {
 	position.Schema = position.CreateSchema()
 	return position
 }
+
 //设置XY的计算公式
 func (p *Position) SetRevert(xy bool) {
 	p.revert = xy
@@ -220,4 +221,46 @@ func (p Position) GetStones() (blackList []string, whiteList []string) {
 		}
 	})
 	return
+}
+func (p Position) CalcCap(color int, hisNode Node) (*Node, int) {
+	cp := p.Clone()
+	deadCount := 0
+	result := &Node{}
+	p.ForeachXY(func(i, j int) {
+		n := cp.GetColor(i, j)
+		if n == Empty {
+			cp.Neighbor4(i, j, func(x, y int) {
+				if cp.GetColor(x, y) != Empty {
+					c := p.GetColor(x, y)
+					if 0-c == color {
+						node, cnt := p.getNextMove(i,j, color, deadCount, hisNode)
+						if node != nil {
+							deadCount = cnt
+							result = node
+						}
+					}
+
+				}
+			})
+		}
+	})
+	if deadCount > 0 {
+		return result, deadCount
+	}
+	return nil, 0
+}
+func (p Position) getNextMove(x, y, c int, deadCount int, hisNode Node) (*Node, int) {
+	p.SetColor(x, y, c)
+	nodes := p.GetDeadByPointColor(x, y, -c)
+	if len(nodes) > 0 {
+		if len(nodes) > deadCount {
+			return &Node{
+				X: x,
+				Y: y,
+				C: c,
+			}, len(nodes)
+		}
+	}
+	p.SetColor(x, y, Empty)
+	return nil, 0
 }
