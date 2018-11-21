@@ -112,6 +112,11 @@ func (k *Kifu) Move(x, y, c int) bool {
 		k.IsKo = false
 	}
 	k.CurPos.SetColor(x, y, c)
+	if c == B {
+		k.CurPos.BlackCap += len(deads)
+	} else if c == W {
+		k.CurPos.WhiteCap += len(deads)
+	}
 	k.CurPos.Cap(deads)
 	k.CurPath++
 	return true
