@@ -202,6 +202,12 @@ winrate: 1.000000
 	black,white:=position.GetStones()
 	assert.Equal(t,strings.Join(black,""),"bb")
 	assert.Equal(t,strings.Join(white,""),"cc")
+
+	kifu=ParseSgf("(;SZ[19]B[tt]W[tt])")
+	kifu.Last()
+	assert.Equal(t,true,kifu.DoublePass)
+	TestLastCheck(t)
+	TestCapGame(t)
 }
 
 func TestLastCheck(t *testing.T)  {

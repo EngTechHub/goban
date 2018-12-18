@@ -19,6 +19,7 @@ type Kifu struct {
 	CurNode   *Node
 	IsKo      bool
 	liberty   Node //劫
+	DoublePass bool
 }
 
 func NewKifu(sgf string) Kifu {
@@ -72,6 +73,11 @@ func (k *Kifu) LastAndCheck() error {
 		}
 		temp := node.GetChild(node.LastSelect)
 		if temp != nil {
+			if !k.DoublePass&& temp.X==-1 &&temp.Y==-1{
+				if k.CurNode.Y==-1&&k.CurNode.X==-1{
+					k.DoublePass=true
+				}
+			}
 			if k.Move(temp.X, temp.Y, temp.C) {
 				k.CurNode = temp
 				k.CurColor = -temp.C
