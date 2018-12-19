@@ -233,7 +233,7 @@ func (p Position) CalcCap(color int, hisNode Node) (*Node, int) {
 				if cp.GetColor(x, y) != Empty {
 					c := p.GetColor(x, y)
 					if 0-c == color {
-						node, cnt := p.getNextMove(i,j, color, deadCount, hisNode)
+						node, cnt := p.getNextMove(i, j, color, deadCount, hisNode)
 						if node != nil {
 							deadCount = cnt
 							result = node
@@ -253,7 +253,7 @@ func (p Position) getNextMove(x, y, c int, deadCount int, hisNode Node) (*Node, 
 	p.SetColor(x, y, c)
 	nodes := p.GetDeadByPointColor(x, y, -c)
 	if len(nodes) > 0 {
-		if len(nodes) > deadCount && x!=hisNode.X&&y!=hisNode.Y&&c!=hisNode.C {
+		if len(nodes) > deadCount && !(x == hisNode.X && y == hisNode.Y && c == hisNode.C) {
 			return &Node{
 				X: x,
 				Y: y,
