@@ -116,6 +116,7 @@ func (k *Kifu) Move(x, y, c int) bool {
 		k.IsKo = true
 		k.liberty = deads[0]
 	} else {
+		k.liberty=*NewNode()
 		k.IsKo = false
 	}
 	k.CurPos.SetColor(x, y, c)
