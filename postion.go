@@ -253,7 +253,7 @@ func (p Position) getNextMove(x, y, c int, deadCount int, hisNode Node) (*Node, 
 	p.SetColor(x, y, c)
 	nodes := p.GetDeadByPointColor(x, y, -c)
 	if len(nodes) > 0 {
-		if len(nodes) > deadCount {
+		if len(nodes) > deadCount && x!=hisNode.X&&y!=hisNode.Y&&c!=hisNode.C {
 			return &Node{
 				X: x,
 				Y: y,
