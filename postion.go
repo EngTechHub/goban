@@ -264,3 +264,50 @@ func (p Position) getNextMove(x, y, c int, deadCount int, hisNode Node) (*Node, 
 	p.SetColor(x, y, Empty)
 	return nil, 0
 }
+
+//获取还棋头
+func (p Position) GetHeader(data []float64, size int) (black, white int) {
+	pos := NewPosition(size)
+	pos.SetRevert(true)
+	pos.ForeachXY(func(x, y int) {
+		if data[pos.GetPos(x, y)] > 0 {
+			pos.SetColor(x, y, 1)
+		} else if data[pos.GetPos(x, y)] < 0 {
+			pos.SetColor(x, y, -1)
+		}
+	})
+	pos.ForeachXY(func(i, j int) {
+		color := pos.GetColor(i, j)
+		if color != 0 {
+			temp := pos.Clone()
+			temp.SetRevert(true)
+			r := NewPosition(size)
+			r.SetRevert(true)
+			p.calcHeader(temp, i, j, color, &r)
+			if color == B {
+				black++
+			}
+			if color == W {
+				white++
+			}
+			r.ForeachXY(func(x, y int) {
+				if r.GetColor(x, y) != Empty {
+					pos.SetColor(x, y, 0)
+				}
+			})
+		}
+	})
+	return
+}
+
+func (s Position) calcHeader(pos *Position, i, j, c int, temp *Position) {
+	if temp.GetColor(i, j) != c {
+		temp.SetColor(i, j, c)
+		pos.Neighbor4(i, j, func(x, y int) {
+			if pos.GetColor(x, y) != c {
+				return
+			}
+			s.calcHeader(pos, x, y, c, temp)
+		})
+	}
+}

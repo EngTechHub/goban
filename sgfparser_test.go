@@ -203,7 +203,7 @@ winrate: 1.000000
 	assert.Equal(t,strings.Join(black,""),"bb")
 	assert.Equal(t,strings.Join(white,""),"cc")
 
-	kifu=ParseSgf("(;SZ[19]B[tt]W[tt])")
+	kifu=ParseSgf("(;SZ[19];B[tt];W[tt])")
 	kifu.Last()
 	assert.Equal(t,true,kifu.DoublePass)
 	TestLastCheck(t)

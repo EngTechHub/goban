@@ -84,5 +84,31 @@ func ParseLZHeatMap(heatmap string) ([]float64, float64, float64) {
 			}
 		}
 	}
-	return position[:],pass, wineRate
+	return position[:], pass, wineRate
+}
+
+//解析leelazero heatmap
+func ParseHeatMap(heatmap string, size int) ([]float64, float64, float64) {
+	position := [size * size]float64{}
+	wineRate := 0.0
+	pass := 0.0
+	for y, v := range strings.Split(heatmap, "\n") {
+		lines := strings.Fields(v)
+		switch len(lines) {
+		case size:
+			for x, p := range lines {
+				pp, _ := strconv.ParseFloat(p, 64)
+				position[x+y*size] = pp
+			}
+		case 2:
+			if lines[0] == "pass:" {
+				pp, _ := strconv.ParseFloat(lines[1], 64)
+				pass = pp
+			} else if lines[0] == "winrate:" {
+				rate, _ := strconv.ParseFloat(lines[1], 64)
+				wineRate = rate
+			}
+		}
+	}
+	return position[:], pass, wineRate
 }
