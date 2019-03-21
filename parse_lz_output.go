@@ -89,7 +89,7 @@ func ParseLZHeatMap(heatmap string) ([]float64, float64, float64) {
 
 //解析leelazero heatmap
 func ParseHeatMap(heatmap string, size int) ([]float64, float64, float64) {
-	position := [size * size]float64{}
+	position := make([]float64, size*size)
 	wineRate := 0.0
 	pass := 0.0
 	for y, v := range strings.Split(heatmap, "\n") {
