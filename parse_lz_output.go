@@ -61,6 +61,68 @@ func ParseLZOutput(output string, size int, limits ...int) ([]*AIOutput, float64
 	return result, rate
 }
 
+// 解析leelazero 数据
+func ParseLZOutputV17(output string, size int, limits ...int) ([]*AIOutput, float64) {
+	lim := 10
+	if len(limits) > 0 {
+		lim = limits[0]
+	}
+	result := make([]*AIOutput, 0)
+	lines := strings.Split(output, "\n")
+	rate := 0.0
+	isFirst := true
+	for _, v := range lines {
+		if strings.Contains(v, "->") {
+
+			item := &AIOutput{} //make(map[string]interface{})
+			first := strings.Split(v, "->")
+			//选点
+			item.Select = strings.TrimSpace(first[0])
+
+			second := strings.Split(strings.TrimSpace(first[1]), "(")
+
+			// 模拟次数
+			times := strings.TrimSpace(second[0])
+			t, _ := strconv.Atoi(times)
+			item.Times = t
+			// 胜率
+			wineRateS := strings.TrimSpace(strings.Replace(strings.Replace(second[1], "V:", "", -1), "%)", "", -1))
+			wineRate, _ := strconv.ParseFloat(wineRateS, 64)
+			item.WineRate = wineRate
+			if isFirst {
+				rate = item.WineRate
+				isFirst = false
+			}
+			lcbStr := strings.Split(strings.Replace(second[2], "LCB:", "", -1), "%)")
+			// lower confidence bounds
+			lcbValue := strings.TrimSpace(lcbStr[0])
+			lcb, _ := strconv.ParseFloat(lcbValue, 64)
+			item.LCB = lcb
+
+			// 策略网络概率
+			three := strings.Split(strings.Replace(second[3], "N:", "", -1), "%)")
+			chanceS := strings.TrimSpace(three[0])
+			chance, _ := strconv.ParseFloat(chanceS, 64)
+			item.Chance = chance
+			//变化图
+			four := strings.Fields(strings.TrimSpace(three[1]))
+			if len(four) > 0 && four[0] == "PV:" {
+				diagram := make([]string, 0)
+				for j, v := range four[1:] {
+					if j >= lim {
+						break
+					}
+					x, y := StoneToXY(v, size)
+					diagram = append(diagram, CoorToSgfNode(x, y))
+				}
+				item.Diagram = diagram
+			}
+			result = append(result, item)
+		}
+	}
+	return result, rate
+}
+
 //解析leelazero heatmap
 func ParseLZHeatMap(heatmap string) ([]float64, float64, float64) {
 	position := [361]float64{}

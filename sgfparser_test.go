@@ -248,3 +248,24 @@ func TestCapGame(t *testing.T)  {
 	n,i:=kifu.CurPos.CalcCap(kifu.CurColor,kifu.GetLiberty())
 	fmt.Println(n,i)
 }
+func TestParseLZOutputV17(t *testing.T) {
+	text:=`Thinking at most 36.0 seconds...
+NN eval=0.428765
+
+ R16 ->       5 (V: 42.93%) (LCB: 34.93%) (N:  3.14%) PV: R16 D16 Q4 D4
+ Q16 ->       4 (V: 43.28%) (LCB: 29.06%) (N: 16.28%) PV: Q16 D4 Q4 D16
+  D4 ->       4 (V: 43.34%) (LCB: 29.01%) (N: 16.68%) PV: D4 Q16 Q4 D16
+ D16 ->       4 (V: 43.60%) (LCB: 26.91%) (N: 16.02%) PV: D16 Q4 Q16
+  C4 ->       4 (V: 43.12%) (LCB: 26.47%) (N:  3.23%) PV: C4 Q4 D16 Q16
+  Q3 ->       4 (V: 43.23%) (LCB: 25.80%) (N:  3.16%) PV: Q3 Q16 D4 D16
+  Q4 ->       3 (V: 43.59%) (LCB:  0.00%) (N: 16.50%) PV: Q4 D16 Q16
+  D3 ->       3 (V: 43.41%) (LCB:  0.00%) (N:  3.24%) PV: D3 D16 Q4
+  R4 ->       3 (V: 43.14%) (LCB:  0.00%) (N:  3.16%) PV: R4 D4 Q16
+ Q17 ->       3 (V: 43.12%) (LCB:  0.00%) (N:  3.21%) PV: Q17 Q4 D16
+3.2 average depth, 5 max depth
+26 non leaf nodes, 1.42 average children
+38 visits, 13634 nodes, 37 playouts, 617 n/s
+`
+	outputs, f := ParseLZOutputV17(text, 19, 3)
+	fmt.Println(outputs,f)
+}
