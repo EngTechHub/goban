@@ -76,6 +76,17 @@ func (p Position) ForeachXY(cb func(x, y int)) {
 	}
 }
 
+// 带终止的循环
+func (p Position) ForeachXYB(cb func(x, y int) bool) {
+	for i := int(0); i < p.Size; i++ {
+		for j := int(0); j < p.Size; j++ {
+			if cb(i, j) {
+				return
+			}
+		}
+	}
+}
+
 //获取对应坐标的四领域,并回调触发
 func (p Position) Neighbor4(x, y int, cb func(x, y int)) {
 	// up
@@ -112,6 +123,19 @@ func (p *Position) GetDeadByPointColor(x, y, c int) []Node {
 		}
 	})
 	return nodes
+}
+
+// 判断是否为空棋盘
+func (p *Position) IsEmpty() bool {
+	isEmpty := true
+	p.ForeachXYB(func(x, y int) bool {
+		if p.GetColor(x, y) != Empty {
+			isEmpty = false
+			return true
+		}
+		return false
+	})
+	return isEmpty
 }
 
 //计算死子但不提子
@@ -300,14 +324,14 @@ func (p Position) GetHeader(data []float64, size int) (black, white int) {
 	return
 }
 
-func (s Position) calcHeader(pos *Position, i, j, c int, temp *Position) {
+func (p Position) calcHeader(pos *Position, i, j, c int, temp *Position) {
 	if temp.GetColor(i, j) != c {
 		temp.SetColor(i, j, c)
 		pos.Neighbor4(i, j, func(x, y int) {
 			if pos.GetColor(x, y) != c {
 				return
 			}
-			s.calcHeader(pos, x, y, c, temp)
+			p.calcHeader(pos, x, y, c, temp)
 		})
 	}
 }
