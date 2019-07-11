@@ -58,6 +58,7 @@ func (k *Kifu) GoTo(step int) {
 	}
 }
 func (k *Kifu) Last() {
+	k.CurPath=0
 	k.GoTo(-1)
 }
 
