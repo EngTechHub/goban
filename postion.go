@@ -1,8 +1,7 @@
 package goban
 
 import (
-	"bytes"
-	"encoding/gob"
+	"encoding/json"
 	"fmt"
 	"strings"
 )
@@ -13,7 +12,7 @@ type Position struct {
 	BlackCap int
 	WhiteCap int
 	HisNode  Node
-	revert   bool
+	Revert   bool
 }
 
 // 创建position对象
@@ -26,12 +25,12 @@ func NewPosition(size int) Position {
 
 //设置XY的计算公式
 func (p *Position) SetRevert(xy bool) {
-	p.revert = xy
+	p.Revert = xy
 }
 
 // position坐标规则x*size+y
 func (p Position) GetPos(x, y int) int {
-	if p.revert {
+	if p.Revert {
 		return x*p.Size + y
 	}
 	return x + y*p.Size
@@ -39,10 +38,12 @@ func (p Position) GetPos(x, y int) int {
 
 // 克隆POSITION对象
 func (p *Position) Clone() (*Position) {
-	var buf bytes.Buffer
-	gob.NewEncoder(&buf).Encode(p);
+	b,_:=json.Marshal(p)
+	//var buf bytes.Buffer
+	//gob.NewEncoder(&buf).Encode(p);
 	pos := &Position{}
-	gob.NewDecoder(bytes.NewBuffer(buf.Bytes())).Decode(pos)
+	//gob.NewDecoder(bytes.NewBuffer(buf.Bytes())).Decode(pos)
+	_=json.Unmarshal(b,pos)
 	return pos
 }
 
