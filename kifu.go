@@ -41,13 +41,12 @@ func (k *Kifu) GoTo(step int) {
 	}
 	k.CurNode = k.Root
 	node := k.Root
-	for i := 0; i < step; i++ {
-		if len(node.Steup) > 0 {
-			for _, v := range node.Steup {
-				k.CurPos.SetColor(v.X, v.Y, v.C)
-			}
+	if len(node.Steup) > 0 {
+		for _, v := range node.Steup {
+			k.CurPos.SetColor(v.X, v.Y, v.C)
 		}
-
+	}
+	for i := 0; i < step; i++ {
 		temp := node.GetChild(node.LastSelect)
 		if temp != nil {
 			k.Move(temp.X, temp.Y, temp.C)
