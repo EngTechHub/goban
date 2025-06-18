@@ -144,8 +144,22 @@ func (k *Kifu) Play(x, y, c int) bool {
 		return true
 	}
 	return false
-
 }
+
+func (k *Kifu) PlayWithComment(x, y, c int, comment string) bool {
+	if k.Move(x, y, c) {
+		k.CurNode = k.CurNode.AppendChild()
+		k.CurNode.X = x
+		k.CurNode.Y = y
+		k.CurNode.C = c
+		k.CurNode.Comment = comment
+		k.NodeCount++
+		k.CurColor = 0 - c
+		return true
+	}
+	return false
+}
+
 func (k Kifu) IsBoard(x, y int) bool {
 	return k.CurPos.GetColor(x, y) != Empty
 }

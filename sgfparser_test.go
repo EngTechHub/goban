@@ -1,11 +1,24 @@
 package goban
 
 import (
+	"os"
 	"fmt"
 	"github.com/magiconair/properties/assert"
 	"strings"
 	"testing"
 )
+
+func TestParseSgfFile(t *testing.T) {
+	// 读取文件内容
+	sgf, err := os.ReadFile("../sgf_import_test_20250610151827.sgf")
+	if err != nil {
+		fmt.Printf("读取文件出错: %v", err)
+		return
+	}
+	kifu := ParseSgf(string(sgf))
+	// assert.Equal(t, kifu.ToSgf(), sgf)
+	fmt.Printf("rs:%v\n", kifu.ToSgf())
+}
 
 func TestParseHeatMap(t *testing.T) {
 	log := ` 0   0   0   0   0   0   0   0   0   0   0   0   0 

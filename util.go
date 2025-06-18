@@ -20,8 +20,8 @@ func StrToASCII(value string, index int) int {
 
 //坐标转为sgf中的坐标字符串
 func CoorToSgfNode(x, y int) string {
-	xChar := fmt.Sprintf("%s", string(x+ACSII))
-	yChar := fmt.Sprintf("%s", string(y+ACSII))
+	xChar := fmt.Sprintf("%s", string(rune('a'+x)))
+	yChar := fmt.Sprintf("%s", string(rune('a'+y)))
 	if x == -1 {
 		xChar = "t"
 	}
@@ -40,7 +40,7 @@ func CoorToBoardNode(x, y, size int) string {
 	if x >= 8 {
 		x++
 	}
-	return strings.ToUpper(fmt.Sprintf("%s%d", string(x+ACSII), size-y))
+	return strings.ToUpper(fmt.Sprintf("%s%d", string(rune('a'+x)), size-y))
 }
 
 // 棋盘坐标转为X,Y坐标

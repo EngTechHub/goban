@@ -14,7 +14,7 @@ type Node struct {
 	Info       map[string][]string `json:"-"`
 }
 
-//创建空对象
+// 创建空对象
 func NewNode() *Node {
 	return &Node{
 		Childrens: make([]*Node, 0),
@@ -24,7 +24,7 @@ func NewNode() *Node {
 	}
 }
 
-//获取子节点
+// 获取子节点
 func (n Node) GetChild(i int) *Node {
 	if len(n.Childrens) == 0 {
 		return nil
@@ -36,16 +36,17 @@ func (n Node) GetChild(i int) *Node {
 	return n.Childrens[n.LastSelect]
 }
 
-//追加子节点
+// 追加子节点
 func (n *Node) AppendChild() *Node {
 	node := NewNode()
 	node.Parent = n
 	n.Childrens = append(n.Childrens, node)
 	return node
 }
+
 func (n *Node) RemoveChild() *Node {
 	parent := n.Parent
-	if parent!=nil{
+	if parent != nil {
 		i := parent.LastSelect
 		parent.Childrens = append(parent.Childrens[:i], parent.Childrens[i+1:]...)
 	}
@@ -75,18 +76,19 @@ func (n *Node) IsPass() bool {
 	return false
 }
 
-func (n *Node) AddInfo(key string,value interface{}) {
-	str:=fmt.Sprintf("%v",value)
+func (n *Node) AddInfo(key string, value interface{}) {
+	str := fmt.Sprintf("%v", value)
 	switch value.(type) {
-	case float64,float32:
-		str=fmt.Sprintf("%.1f",value)
+	case float64, float32:
+		str = fmt.Sprintf("%.1f", value)
 	}
-	n.Info[key]=[]string{str}
+	n.Info[key] = []string{str}
 }
-func (n *Node) GetInfo(key string) string{
-	v,has:=n.Info[key]
-	if has{
-		if len(v)>0{
+
+func (n *Node) GetInfo(key string) string {
+	v, has := n.Info[key]
+	if has {
+		if len(v) > 0 {
 			return v[0]
 		}
 	}
